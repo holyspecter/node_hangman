@@ -52,10 +52,10 @@
 </head>
 <body>
 <ul id="messages"></ul>
-<form action="">
-    <input id="m" name="char" autocomplete="off" maxlength="1"/>
-    <button>Send</button>
-</form>
+    <form action="">
+        <input id="m" name="char" autocomplete="off" maxlength="1"/>
+        <button>Send</button>
+    </form>
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
@@ -66,6 +66,19 @@
         socket.emit('game.input.char', $('#m').val());
         $('#m').val('');
         return false;
+    });
+
+    socket.on('game.init_info', function (initInfo) {
+        var gameField = $('<div />').addClass('game-field'),
+            i;
+
+        console.log('game.init_info');
+
+        for (i = 0; i < initInfo.wordLength; i += 1) {
+            gameField.append('<span>&nbsp;__&nbsp;</span>');
+        }
+
+        $('form').before(gameField);
     });
 
     socket.on('game.input.right_char', function () {
