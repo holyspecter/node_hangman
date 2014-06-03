@@ -1,0 +1,30 @@
+doctype html
+head
+    title Socket.IO chat
+    link(rel='stylesheet', href='css/main.css', type='text/css')
+body
+    - for (var i = 0; i < wordLength; i++)
+        input.character(id='char-' + i autocomplete="off" maxlength="1")
+    br
+    input#character-input(autocomplete="off" maxlength="1")
+
+script(src="/socket.io/socket.io.js")
+script(src="http://code.jquery.com/jquery-1.11.1.js")
+script.
+    var socket = io();
+
+    $('#character-input').on('change', function (event) {
+        var target = event.target;
+
+        socket.emit('game.input.char', $(target).val());
+    });
+
+    socket.on('game.input.right_char', function (eventData) {
+        $('#char-' + eventData.occurences).val(eventData.char).addClass('right-character');
+        $('#character-input').val('');
+    });
+
+    socket.on('game.input.wrong_char', function (eventData) {
+        alert('wrong');
+        $('#character-input').val('');
+    });

@@ -1,0 +1,12 @@
+.character {
+    background-color: lightgoldenrodyellow;
+    width: 15px;
+}
+
+.right-char {
+    background-color: green;
+}
+
+.wrong-char {
+    background-color: darkred;
+}

@@ -3,8 +3,10 @@
  */
 
 var app = require('express')(),
+    express = require('express'),
     http = require('http').Server(app),
     io = require('socket.io')(http),
+    jade = require('jade'),
     words = [
         'Kiev',
         'Moscow',
@@ -12,21 +14,28 @@ var app = require('express')(),
     ],
     currentWord;
 
-app.get('/', function(req, res){
-    res.sendfile('index.html');
-});
+app.use(express.static(__dirname + '/public'));
 
-io.on('connection', function(socket){
+app.get('/', function(req, res) {
     currentWord = words[0];
     console.log('New game started. the word is: ' + currentWord);
 
-    io.emit('game.init_info', {
-        'wordLength': currentWord.length
-    });
+    res.send(jade.renderFile("index.jade", {"wordLength": currentWord.length}));
+});
 
+io.on('connection', function(socket){
     socket.on('game.input.char', function(char) {
-        io.emit(-1 !== words[0].indexOf(char) ? 'game.input.right_char' : 'game.input.wrong_char');
-        console.log('message: ' + char);
+        var occurences = words[0].search(char) || [];
+
+//        todo all occurences of the char
+
+        io.emit(
+            occurences !== -1 ? 'game.input.right_char' : 'game.input.wrong_char',
+            {
+                'occurences': occurences,
+                'char': char
+            }
+        );
         console.log('message: ' + words[0].indexOf(char));
     });
 
