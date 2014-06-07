@@ -1,7 +1,3 @@
-/**
- * Created by rok on 6/1/14.
- */
-
 var app = require('express')(),
     express = require('express'),
     http = require('http').Server(app),
@@ -15,6 +11,7 @@ var app = require('express')(),
     currentWord;
 
 app.use(express.static(__dirname + '/public'));
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.get('/', function(req, res) {
     currentWord = words[0];

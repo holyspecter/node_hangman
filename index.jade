@@ -1,15 +1,28 @@
 doctype html
 head
-    title Socket.IO chat
+    title Node Hangman
     link(rel='stylesheet', href='css/main.css', type='text/css')
+    link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css', type='text/css')
 body
-    - for (var i = 0; i < wordLength; i++)
-        input.character(id='char-' + i autocomplete="off" maxlength="1")
-    br
-    input#character-input(autocomplete="off" maxlength="1")
+    div.container
+        div.col-md-8.col-md-offset-2
+            h2.text-center Hang yourself!
+            div.row
+                p Questions should be here
+            div.row
+                div.col-md-6.col-md-offset-3
+                    - for (var i = 0; i < wordLength; i++)
+                        input.character(id="char-" + i autocomplete="off" maxlength="1" disabled="disabled")
+            div.row
+                span#check-message
+            div.row
+                div.col-md-4.col-md-offset-6.text-right
+                    label(for="character-input") Input char
+                div.col-md-2
+                    input#character-input(autocomplete="off" maxlength="1")
 
 script(src="/socket.io/socket.io.js")
-script(src="http://code.jquery.com/jquery-1.11.1.js")
+script(src="/bower_components/jquery/dist/jquery.min.js")
 script.
     var socket = io();
 
@@ -22,9 +35,12 @@ script.
     socket.on('game.input.right_char', function (eventData) {
         $('#char-' + eventData.occurences).val(eventData.char).addClass('right-character');
         $('#character-input').val('');
+        $('#check-message').parent().addClass('has-success'); // todo make this shit work
+        $('#check-message').text("You're right, asshole!");
     });
 
     socket.on('game.input.wrong_char', function (eventData) {
-        alert('wrong');
         $('#character-input').val('');
+        $('#check-message').parent().addClass('has-error');
+        $('#check-message').text("You're wrong! Die, motherfucker!");
     });
