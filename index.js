@@ -10,19 +10,17 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.get('/', function(req, res) {
     game.init();
-    console.log('New game started. the word is: ' + game.getWord());
-
     res.send(jade.renderFile("./public/view/index.jade", {"wordLength": game.getWordLength()}));
 });
 
 io.on('connection', function(socket){
     socket.on('game.input.char', function(char) {
-        game.setChar(char);
+        var occurrences = game.execute(char);
 
         io.emit(
-            game.isRightChar() ? 'game.input.right_char' : 'game.input.wrong_char',
+            occurrences.length > 0 ? 'game.input.right_char' : 'game.input.wrong_char',
             {
-                'occurrences': game.getCharOccurrences(),
+                'occurrences': occurrences,
                 'char': char
             }
         );

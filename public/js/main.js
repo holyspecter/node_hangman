@@ -1,9 +1,12 @@
 var socket = io();
 
-$('#character-input').on('change', function (event) {
-    var target = event.target;
+$('#character-input').on('input', function (event) {
+    var target = event.target,
+        char = $(target).val();
 
-    socket.emit('game.input.char', $(target).val());
+    if (char) {
+        socket.emit('game.input.char', $(target).val());
+    }
 });
 
 socket.on('game.input.right_char', function (eventData) {
