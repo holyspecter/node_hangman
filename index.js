@@ -3,31 +3,26 @@ var app = require('express')(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     jade = require('jade'),
-    words = [
-        'Kiev',
-        'Moscow',
-        'Paris'
-    ],
-    currentWord;
+    game = require('./modules/game')();
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.get('/', function(req, res) {
-    currentWord = words[0];
-    console.log('New game started. the word is: ' + currentWord);
+    game.init();
+    console.log('New game started. the word is: ' + game.getWord());
 
-    res.send(jade.renderFile("index.jade", {"wordLength": currentWord.length}));
+    res.send(jade.renderFile("./public/view/index.jade", {"wordLength": game.getWordLength()}));
 });
 
 io.on('connection', function(socket){
     socket.on('game.input.char', function(char) {
-        var occurrences = findAllOccurrencesCharInString(currentWord, char) || [];
+        game.setChar(char);
 
         io.emit(
-            occurrences.length > 0 ? 'game.input.right_char' : 'game.input.wrong_char',
+            game.isRightChar() ? 'game.input.right_char' : 'game.input.wrong_char',
             {
-                'occurrences': occurrences,
+                'occurrences': game.getCharOccurrences(),
                 'char': char
             }
         );
@@ -41,20 +36,3 @@ io.on('connection', function(socket){
 http.listen(3000, function(){
     console.log('listening on *:3000');
 });
-
-function findAllOccurrencesCharInString(string, char) {
-    var occurrences = [],
-        index = 0;
-
-    string = string.toLowerCase();
-    char = char.toLowerCase();
-
-    while (-1 !== (index = string.indexOf(char, index))) {
-        occurrences.push(index++);
-    }
-    return occurrences;
-}
-
-function random (low, high) {
-    return Math.random() * (high - low) + low;
-}
