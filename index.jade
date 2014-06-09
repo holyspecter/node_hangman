@@ -10,7 +10,7 @@ body
             div.row
                 p Questions should be here
             div.row
-                div.col-md-6.col-md-offset-3
+                div.col-md-12.text-center
                     - for (var i = 0; i < wordLength; i++)
                         input.character(id="char-" + i autocomplete="off" maxlength="1" disabled="disabled")
             div.row
@@ -23,24 +23,5 @@ body
 
 script(src="/socket.io/socket.io.js")
 script(src="/bower_components/jquery/dist/jquery.min.js")
-script.
-    var socket = io();
+script(src="js/main.js")
 
-    $('#character-input').on('change', function (event) {
-        var target = event.target;
-
-        socket.emit('game.input.char', $(target).val());
-    });
-
-    socket.on('game.input.right_char', function (eventData) {
-        $('#char-' + eventData.occurences).val(eventData.char).addClass('right-character');
-        $('#character-input').val('');
-        $('#check-message').parent().addClass('has-success'); // todo make this shit work
-        $('#check-message').text("You're right, asshole!");
-    });
-
-    socket.on('game.input.wrong_char', function (eventData) {
-        $('#character-input').val('');
-        $('#check-message').parent().addClass('has-error');
-        $('#check-message').text("You're wrong! Die, motherfucker!");
-    });

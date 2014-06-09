@@ -22,18 +22,15 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket){
     socket.on('game.input.char', function(char) {
-        var occurences = words[0].search(char) || [];
-
-//        todo all occurences of the char
+        var occurrences = findAllOccurrencesCharInString(currentWord, char) || [];
 
         io.emit(
-            occurences !== -1 ? 'game.input.right_char' : 'game.input.wrong_char',
+            occurrences.length > 0 ? 'game.input.right_char' : 'game.input.wrong_char',
             {
-                'occurences': occurences,
+                'occurrences': occurrences,
                 'char': char
             }
         );
-        console.log('message: ' + words[0].indexOf(char));
     });
 
     socket.on('disconnect', function(){
@@ -44,6 +41,19 @@ io.on('connection', function(socket){
 http.listen(3000, function(){
     console.log('listening on *:3000');
 });
+
+function findAllOccurrencesCharInString(string, char) {
+    var occurrences = [],
+        index = 0;
+
+    string = string.toLowerCase();
+    char = char.toLowerCase();
+
+    while (-1 !== (index = string.indexOf(char, index))) {
+        occurrences.push(index++);
+    }
+    return occurrences;
+}
 
 function random (low, high) {
     return Math.random() * (high - low) + low;
