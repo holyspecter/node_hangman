@@ -9,7 +9,9 @@ module.exports = function () {
         userId: String,
         word: String,
         state: { type: Array, "default": [] },
-        failedChars: { type: Array, "default": [] }
+        failedChars: { type: Array, "default": [] },
+        isWin: Boolean,
+        isDefeat: Boolean
     });
 
     return mongoose.model('Game', schema);

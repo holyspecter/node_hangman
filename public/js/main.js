@@ -1,3 +1,5 @@
+"use strict";
+
 var socket = io();
 
 $('#character-input').on('input', function (event) {
@@ -22,4 +24,12 @@ socket.on('game.input.wrong_char', function (eventData) {
     $('#character-input').val('');
     $('#check-message').parent().addClass('has-error');
     $('#check-message').text("You're wrong! Die, motherfucker!");
+});
+
+socket.on('game.win', function (eventData) {
+    alert("You're win this time");
+});
+
+socket.on('game.defeat', function (eventData) {
+    alert("Haha! You're hanged!");
 });
