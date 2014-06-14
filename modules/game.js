@@ -8,6 +8,7 @@ module.exports = function () {
         ],
         utils = require('./utils')(),
         gameModel = require('../models/Game')(),
+        Q = require('q'),
         model,
         currentWord,
         givenChar,
@@ -18,8 +19,10 @@ module.exports = function () {
         isWin: false,
         isDefeat: false,
         init: function () {
-//            gameManager.findExistingGame();
-            model = model || gameManager.createNewGame();
+            return gameManager.findExistingGame()
+                .then(function () {
+                    model = model || gameManager.createNewGame();
+                });
         },
         getChar: function () {
             return givenChar;
@@ -83,7 +86,8 @@ module.exports = function () {
         },
         createNewGame: function () {
             // todo randomize or anything else
-            currentWord = words[1];
+            console.log('creates');
+            currentWord = words[0];
             gameManager.isWin = false;
             gameManager.isDefeat = false;
             model = new gameModel({
@@ -98,17 +102,23 @@ module.exports = function () {
             return model;
         },
         findExistingGame: function () {
-            // todo make shit work
-            gameModel
-                .find({ userId: 'test' })
-                .where('isWin').equals(false)
-                .where('isDefeat').equals(false)
-                .exec(function (err, obj) {
-                    if (!err && obj[0]) {
-                        model = obj[0];
-                        currentWord = model.word;
-                    }
-                });
+            return Q.fcall(function () {
+                return gameModel
+                    .find({ userId: 'test' })
+                    .where('isWin').equals(false)
+                    .where('isDefeat').equals(false)
+                    .exec(function (err, obj) {
+                        if (!err && obj[0]) {
+                            model = obj[0];
+                            currentWord = model.word;
+                        } else {
+                            // todo error logging
+                            console.log(err);
+                        }
+                        return model;
+                    });
+            });
+
         }
     };
 

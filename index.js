@@ -11,8 +11,11 @@ app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.get('/', function(req, res) {
-    game.init();
-    res.send(jade.renderFile("./public/view/index.jade", {"wordLength": game.getWordLength()}));
+    game.init()
+        .then(function () {
+            res.send(jade.renderFile("./public/view/index.jade", {"wordLength": game.getWordLength()}));
+        })
+        .done();
 });
 
 io.on('connection', function(socket){
@@ -30,7 +33,6 @@ io.on('connection', function(socket){
             event += occurrences.length > 0 ? 'input.right_char' : 'input.wrong_char'
         }
 
-        console.log(event);
         io.emit(
             event,
             {

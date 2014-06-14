@@ -10,8 +10,8 @@ module.exports = function () {
         word: String,
         state: { type: Array, "default": [] },
         failedChars: { type: Array, "default": [] },
-        isWin: Boolean,
-        isDefeat: Boolean
+        isWin: { type: Boolean, "default": false },
+        isDefeat: { type: Boolean, "default": false }
     });
 
     return mongoose.model('Game', schema);
