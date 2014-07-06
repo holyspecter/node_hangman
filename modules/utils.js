@@ -17,7 +17,7 @@ module.exports = function () {
             return occurrences;
         },
         random: function (low, high) {
-            return Math.random() * (high - low) + low;
+            return Math.floor(Math.random() * (high - low) + low);
         }
     };
 

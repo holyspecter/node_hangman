@@ -87,7 +87,7 @@ module.exports = function () {
         createNewGame: function () {
             // todo randomize or anything else
             console.log('creates');
-            currentWord = words[0];
+            currentWord = words[utils.random(0, 2)];
             gameManager.isWin = false;
             gameManager.isDefeat = false;
             model = new gameModel({
