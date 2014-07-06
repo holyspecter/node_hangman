@@ -10,7 +10,10 @@ module.exports = function () {
     schema = new mongoose.Schema({
         userId: String,
         word: String,
-        state: { type: Array, "default": [] },
+        state: [ new mongoose.Schema({
+            index: Number,
+            char: String
+        }, { _id: false })],
         failedChars: { type: Array, "default": [] },
         isWin: { type: Boolean, "default": false },
         isDefeat: { type: Boolean, "default": false }

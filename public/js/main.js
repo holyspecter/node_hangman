@@ -2,6 +2,13 @@
 
 var socket = io();
 
+$(function () {
+    console.log(state);
+    $.each(state, function () {
+        $('#char-' + this.index).val(this.char);
+    });
+});
+
 $('#character-input').on('input', function (event) {
     var target = event.target,
         char = $(target).val();

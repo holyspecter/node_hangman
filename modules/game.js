@@ -43,13 +43,14 @@ module.exports = function () {
             if (occurrences.length > 0) {
                 for (key in occurrences) {
                     if (occurrences.hasOwnProperty(key)) {
-                        state[occurrences[key]] = givenChar;
+                        state.push({
+                            index: occurrences[key],
+                            char: givenChar
+                        });
                     }
                 }
 
                 gameManager.isWin = gameManager.checkWin(state);
-
-                // todo smooth state saving
                 model.state = state;
                 model.isWin = gameManager.isWin;
                 gameManager.saveModel();
