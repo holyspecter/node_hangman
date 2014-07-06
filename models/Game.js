@@ -2,6 +2,8 @@ module.exports = function () {
     var mongoose = require('mongoose'),
         schema;
 
+    mongoose.set('debug', true);
+
     mongoose.connect('mongodb://localhost/hangman');
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 

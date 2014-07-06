@@ -14,7 +14,7 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.get('/', function(req, res) {
     game.init()
         .then(function () {
-            res.send(jade.renderFile("./public/view/index.jade", {"wordLength": game.getWordLength()}));
+            res.send(jade.renderFile("./public/view/index.jade", game.getPublicData()));
         })
         .done();
 });
@@ -24,8 +24,6 @@ io.on('connection', function(socket){
         var occurrences = game.execute(char),
             event = 'game.';
 
-        console.log('Defeat:' + game.isDefeat());
-        console.log('Win:' + game.isWin());
         if (game.isWin()) {
            event += 'win';
         } else if (game.isDefeat()) {

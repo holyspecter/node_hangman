@@ -20,6 +20,9 @@ module.exports = function () {
         isWin: false,
         isDefeat: false,
         init: function () {
+            model = null;
+            currentWord = null;
+
             return gameManager.findExistingGame()
                 .then(function () {
                     model = model || gameManager.createNewGame();
@@ -45,23 +48,29 @@ module.exports = function () {
                 }
 
                 gameManager.isWin = gameManager.checkWin(state);
-                gameManager.updateModel({
-                    state: state,
-                    isWin: gameManager.isWin
-                });
+
+                // todo smooth state saving
+                model.state = state;
+                model.isWin = gameManager.isWin;
+                gameManager.saveModel();
             } else {
                 failedChars.push(givenChar);
                 gameManager.isDefeat = gameManager.checkDefeat(failedChars);
-                gameManager.updateModel({
-                    failedChars: failedChars,
-                    isDefeat: gameManager.isDefeat
-                });
+                model.failedChars = failedChars;
+                model.isDefeat = gameManager.isDefeat;
+                gameManager.saveModel();
             }
 
             return occurrences;
         },
-        getWordLength: function () {
-            return currentWord.length;
+        getPublicData: function () {
+            return model
+                ? {
+                    "wordLength": currentWord.length,
+                    "state": model.state,
+                    "failedChars": model.failedChars
+                  }
+                : {};
         },
         getCharOccurrences: function () {
             return utils.findAllOccurrencesCharInString(currentWord, givenChar)
@@ -70,19 +79,10 @@ module.exports = function () {
             return gameManager.getCharOccurrences() > 0;
         },
         checkDefeat: function (failedChars) {
-            return  gameManager.MAX_FAILS === failedChars.length;
+            return  gameManager.MAX_FAILS <= failedChars.length;
         },
         checkWin: function (state) {
             return currentWord.length === state.length;
-        },
-        updateModel: function (data) {
-            model.update(
-                data,
-                {upsert: true},
-                function (err) {
-                    if (err) logger.error(err);
-                }
-            )
         },
         createNewGame: function () {
             currentWord = words[utils.random(0, 2)];
@@ -93,11 +93,14 @@ module.exports = function () {
                 word: currentWord
             });
 
-            model.save(function (err) {
-                if (err) logger.error(err);
-            });
+            gameManager.saveModel();
 
             return model;
+        },
+        saveModel: function () {
+            model.save(function (err) {
+                if (err) logger.error('Error while saving game:' + err.message);
+            });
         },
         findExistingGame: function () {
             return Q.fcall(function () {
@@ -109,8 +112,8 @@ module.exports = function () {
                         if (!err && obj[0]) {
                             model = obj[0];
                             currentWord = model.word;
-                        } else {
-                            logger.error(err);
+                        } else if (err) {
+                            logger.error('Error while searching game: ' + err);
                         }
                         return model;
                     });
@@ -122,7 +125,6 @@ module.exports = function () {
     return {
         isWin: function() {
             return gameManager.isWin;
-
         },
         isDefeat: function () {
             return gameManager.isDefeat;
@@ -136,8 +138,8 @@ module.exports = function () {
         execute: function (char) {
             return gameManager.execute(char);
         },
-        getWordLength: function () {
-            return gameManager.getWordLength();
+        getPublicData: function () {
+            return gameManager.getPublicData();
         },
         getCharOccurrences: function () {
             return gameManager.getCharOccurrences();
