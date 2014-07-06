@@ -9,6 +9,7 @@ module.exports = function () {
         utils = require('./utils')(),
         gameModel = require('../models/Game')(),
         Q = require('q'),
+        logger = require('./logger'),
         model,
         currentWord,
         givenChar,
@@ -79,14 +80,11 @@ module.exports = function () {
                 data,
                 {upsert: true},
                 function (err) {
-                    // todo error logging
-                    if (err) console.log(err);
+                    if (err) logger.error(err);
                 }
             )
         },
         createNewGame: function () {
-            // todo randomize or anything else
-            console.log('creates');
             currentWord = words[utils.random(0, 2)];
             gameManager.isWin = false;
             gameManager.isDefeat = false;
@@ -96,7 +94,7 @@ module.exports = function () {
             });
 
             model.save(function (err) {
-                if (err) console.log(err);
+                if (err) logger.error(err);
             });
 
             return model;
@@ -112,8 +110,7 @@ module.exports = function () {
                             model = obj[0];
                             currentWord = model.word;
                         } else {
-                            // todo error logging
-                            console.log(err);
+                            logger.error(err);
                         }
                         return model;
                     });
