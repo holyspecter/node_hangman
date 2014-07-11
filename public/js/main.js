@@ -3,7 +3,6 @@
 var socket = io();
 
 $(function () {
-    console.log(state);
     $.each(state, function () {
         $('#char-' + this.index).val(this.char);
     });
@@ -35,8 +34,10 @@ socket.on('game.input.wrong_char', function (eventData) {
 
 socket.on('game.win', function (eventData) {
     alert("You're win this time");
+    location.reload();
 });
 
 socket.on('game.defeat', function (eventData) {
     alert("Haha! You're hanged!");
+    location.reload();
 });

@@ -1,7 +1,7 @@
 "use strict";
 
-var app = require('express')(),
-    express = require('express'),
+var express = require('express'),
+    app = express(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     jade = require('jade'),
@@ -22,18 +22,18 @@ app.get('/', function(req, res) {
 io.on('connection', function(socket){
     socket.on('game.input.char', function(char) {
         var occurrences = game.execute(char),
-            event = 'game.';
+            eventName = 'game.';
 
         if (game.isWin()) {
-           event += 'win';
+           eventName += 'win';
         } else if (game.isDefeat()) {
-            event += 'defeat';
+            eventName += 'defeat';
         } else {
-            event += occurrences.length > 0 ? 'input.right_char' : 'input.wrong_char'
+            eventName += occurrences.length > 0 ? 'input.right_char' : 'input.wrong_char'
         }
 
         io.emit(
-            event,
+            eventName,
             {
                 'occurrences': occurrences,
                 'char': char

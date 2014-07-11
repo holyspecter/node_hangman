@@ -142,9 +142,6 @@ module.exports = function () {
         getPublicData: function () {
             return gameManager.getPublicData();
         },
-        getCharOccurrences: function () {
-            return gameManager.getCharOccurrences();
-        },
         isRightChar: function () {
             return gameManager.isRightChar();
         }
