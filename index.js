@@ -1,51 +1,22 @@
-"use strict";
+'use strict';
 
 var express = require('express'),
     app = express(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
-    jade = require('jade'),
-    game = require('./modules/game')(),
-    logger = require('./modules/logger');
+    logger = require('./modules/logger'),
+    game = require('./controllers/game'),
+    authentication = require('./controllers/authentication'),
+    config = require('./config/config');
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-app.get('/', function(req, res) {
-    game.init()
-        .then(function () {
-            res.send(jade.renderFile("./public/view/index.jade", game.getPublicData()));
-        })
-        .done();
-});
+app.get('/auth', authentication.login);
+app.get('/', game.main);
 
-io.on('connection', function(socket){
-    socket.on('game.input.char', function(char) {
-        var occurrences = game.execute(char),
-            eventName = 'game.';
+game.initListeners(io);
 
-        if (game.isWin()) {
-           eventName += 'win';
-        } else if (game.isDefeat()) {
-            eventName += 'defeat';
-        } else {
-            eventName += occurrences.length > 0 ? 'input.right_char' : 'input.wrong_char'
-        }
-
-        io.emit(
-            eventName,
-            {
-                'occurrences': occurrences,
-                'char': char
-            }
-        );
-    });
-
-    socket.on('disconnect', function(){
-        logger.trace('user disconnected');
-    });
-});
-
-http.listen(3000, function(){
-    logger.trace('listening on *:3000');
+http.listen(config.port, function (){
+    logger.trace('listening on *:' + config.port);
 });

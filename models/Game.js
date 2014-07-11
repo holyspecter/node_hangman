@@ -1,10 +1,11 @@
 module.exports = function () {
     var mongoose = require('mongoose'),
+        dbConfig = require('../config/config').db,
         schema;
 
-    mongoose.set('debug', true);
+    mongoose.set('debug', dbConfig.debug);
 
-    mongoose.connect('mongodb://localhost/hangman');
+    mongoose.connect(dbConfig.path);
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
     schema = new mongoose.Schema({
