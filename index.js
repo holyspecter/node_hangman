@@ -7,12 +7,30 @@ var express = require('express'),
     logger = require('./modules/logger'),
     game = require('./controllers/game'),
     authentication = require('./controllers/authentication'),
-    config = require('./config/config');
+    config = require('./config/config'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
+    bodyParser = require('body-parser'),
+    passport = require('passport');
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use(cookieParser('ovtsa'));
+app.use(bodyParser());
+app.use(session({
+    secret: 'ovtsa',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.get('/auth', authentication.login);
+app.get('/login', authentication.loginForm);
+app.post('/login', authentication.login);
+
+//app.get('/auth', authentication.auth);
+//app.get('/auth-check', authentication.check);
+
 app.get('/', game.main);
 
 game.initListeners(io);

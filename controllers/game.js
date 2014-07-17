@@ -4,9 +4,12 @@ var app = require('express')(),
     http = require('http').Server(app),
     jade = require('jade'),
     game = require('../modules/game')(),
-    logger = require('../modules/logger');
+    logger = require('../modules/logger'),
+    passport = require('passport');
 
 exports.main = function (req, res) {
+    passport.authenticate('facebook');
+    console.log('User:' + req.user);
     game.init()
         .then(function () {
             res.send(jade.renderFile("./public/view/index.jade", game.getPublicData()));
