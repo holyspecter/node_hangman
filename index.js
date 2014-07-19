@@ -27,11 +27,9 @@ app.use(passport.session());
 
 app.get('/login', authentication.loginForm);
 app.post('/login', authentication.login);
+app.get('/logout', authentication.logout);
 
-//app.get('/auth', authentication.auth);
-//app.get('/auth-check', authentication.check);
-
-app.get('/', game.main);
+app.get('/', authentication.checkLogin, game.main);
 
 game.initListeners(io);
 

@@ -44,3 +44,16 @@ module.exports.login = passport.authenticate('local', {
     failureRedirect: '/login',
     failureFlash: true
 });
+
+module.exports.logout = function (req, res) {
+    req.logout();
+    res.redirect('/');
+};
+
+module.exports.checkLogin = function (req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
