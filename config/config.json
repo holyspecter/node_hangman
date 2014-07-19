@@ -1,0 +1,12 @@
+{
+    "port": 3000,
+    "db": {
+        "debug": true,
+        "path": "mongodb://localhost/hangman"
+    },
+    "logs": {
+        "path": "logs/hangman.log",
+        "level": "TRACE",
+        "name": "hangman"
+    }
+}
