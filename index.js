@@ -25,11 +25,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/login', authentication.loginForm);
-app.post('/login', authentication.login);
-app.get('/logout', authentication.logout);
+// @todo make auth work
+//app.get('/login', authentication.loginForm);
+//app.post('/login', authentication.login);
+//app.get('/logout', authentication.logout);
 
-app.get('/', authentication.checkLogin, game.main);
+//app.get('/', authentication.checkLogin, game.main);
+app.get('/', game.main);
 
 game.initListeners(io);
 
