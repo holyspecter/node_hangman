@@ -11,7 +11,7 @@ exports.main = function (req, res) {
     console.log('User:' + req.user);
     game.init()
         .then(function () {
-            res.send(jade.renderFile("./public/view/index.jade", game.getPublicData()));
+            res.send(jade.renderFile("./view/index.jade", game.getPublicData()));
         })
         .done();
 };

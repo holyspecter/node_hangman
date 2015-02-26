@@ -36,7 +36,7 @@ passport.deserializeUser(function (id, done) {
 });
 
 module.exports.loginForm = function (req, res) {
-    res.send(jade.renderFile('./public/view/login.jade'));
+    res.send(jade.renderFile('./view/login.jade'));
 };
 
 module.exports.login = passport.authenticate('local', {
